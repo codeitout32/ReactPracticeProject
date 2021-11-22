@@ -1,27 +1,81 @@
 import React,{ useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { UserContext } from '../contexts/AuthContext';
+import axios from 'axios'
+
 
 const Dashboard = () => {
 
     const navigate = useNavigate();
     const [authUser,setAuth] = useState(false);
+    const [list,setList] = useState('hello');
+     
 
     const { user : usersess, userData : authUserData, logout} = useContext(UserContext);
 
+    
 
     useEffect(() => {
       if(!authUserData) navigate('/');
 
       setAuth(authUserData);
       console.log(authUserData);
+      listUser();
 
+      
 
     }, [authUserData])
 
     useEffect(() => {
       console.log(authUser);
     }, [authUser])
+
+
+    const listUser = async () => {
+      
+      const limits = {
+        "limit": 100,
+        "offset": 0
+      }
+
+      try {
+        const headers = {
+        "Content-type": 'application/json' ,
+        "Authorization": `Bearer ${process.env.REACT_APP_M3OTOKEN}`
+      };  
+
+      const res = await axios.post('https://api.m3o.com/v1/user/List', limits , {headers});
+      const data = await res.data;
+
+      console.log(data)
+
+
+      const getDate = (dateString) => {
+        console.log(dateString)
+        const date = new Date(parseInt(dateString));
+        return date.toDateString();
+      }
+
+      const list = data.users.map((item,index)=> (
+        <tr key={item.id}>
+                <th scope="row">{index+1}</th>
+                <td>{item.username}</td>
+                <td>{item.email}</td>
+                <td>{getDate(item.created)}</td>
+        </tr>
+      ))
+      console.log(list);
+      setList(list);
+    }
+
+    catch (error){
+      
+      // setPerror(true);
+      if (error.response) console.log(error.response.data);
+      else console.log(error.message);
+
+    }
+  }
 
 
     const handleLogout = () => {
@@ -152,9 +206,28 @@ const Dashboard = () => {
 
         {authUser &&  <div><h2>Hello User {authUser.account.username}</h2>  <h2>Your Email is  {authUser.account.email}</h2></div> }
          
+         <h2>List of registerd Users</h2>
           <div className="table-responsive">
             
-              
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">UserName</th>
+                <th scope="col">Email</th>
+                <th scope="col">Joined</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@mdo</td>
+              </tr>
+              {list}
+            </tbody>
+          </table>
             
           </div>
         </main>
