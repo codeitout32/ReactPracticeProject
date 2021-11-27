@@ -1,53 +1,27 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector, connect } from "react-redux";
 import axios from "axios";
 import { UserContext } from "../contexts/AuthContext";
+import { login } from "../actions/loginActions";
 
-//Redux
-import { login, getData } from "../actions/loginActions";
-import { useDispatch, useSelector, connect } from "react-redux";
-
-const Login = (props) => {
+const Login = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [sUser, setsUser] = useState(false);
   // const [email, setEmail] = useState('')
   const [password, setPassword] = useState("");
   const [passError, setPerror] = useState(false);
   const [remember, setRemember] = useState(false);
-  const [test, setTest] = useState(false);
 
   const {
     user: authuser,
     userData: authUserData,
-    login: conLogin,
+    login,
     readUser,
   } = useContext(UserContext);
 
-  const storUser = useSelector((user) => user);
-
-  useEffect(() => {
-    if (storUser?.session.user) {
-      console.log("storuser", storUser);
-
-      conLogin(storUser.session.user);
-      readUser(storUser.session.userData);
-      navigate("/user");
-    }
-  }, [storUser]);
-
-  useEffect(() => {
-    if (test) navigate("/register");
-  }, [test]);
-
-  const navigate = useNavigate();
-
-  const checkStore = () => {
-    console.log(storUser);
-    if (storUser?.user) {
-      console.log("storuser", storUser);
-      navigate("/user");
-    }
-  };
+  // const navigate = useNavigate();
 
   const handleChange = (event) => {
     const target = event.target;
@@ -88,9 +62,14 @@ const Login = (props) => {
       const res = await axios.post("https://api.m3o.com/v1/user/Login", user, {
         headers,
       });
-      const data = res.data;
+      const data = await res.data;
 
-      conLogin(data);
+      login(data);
+
+      // dispatch({
+      //   type: LOGIN_SUCCESS,
+      //   payload: { user: data },
+      // });
 
       // const rawpost = await fetch(`http://localhost:5001/users?username=${username}&password=${password}`);
 
@@ -99,8 +78,6 @@ const Login = (props) => {
       // setsUser({...data});
 
       console.log(authuser);
-
-      props.login(data);
 
       // const {username} = user
       const userRead = await axios.post(
@@ -114,12 +91,9 @@ const Login = (props) => {
 
       readUser(readData);
 
-      await props.getData(readData);
-
-      console.log("storuser", storUser);
       // console.log(readData);
       // console.log(sUser);
-      // navigate("/user");
+      navigate("/user");
     } catch (error) {
       setPerror(true);
       if (error.response) console.log(error.response.data);
@@ -132,6 +106,17 @@ const Login = (props) => {
       navigate("/user");
     } else console.log("not login");
   };
+
+  //Redux
+  const { isLoggedIn } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/user");
+    }
+  }, [isLoggedIn]);
+
+  const dispatch = useDispatch();
 
   return (
     <section>
@@ -190,17 +175,9 @@ const Login = (props) => {
 
           {/* <p>Username: `{authuser.name}`</p> */}
         </form>
-        <button
-          onClick={() => {
-            setTest(true);
-            console.log(test);
-          }}
-        >
-          check1
-        </button>
       </div>
     </section>
   );
 };
 
-export default connect(null, { login, getData })(Login);
+export default connect(null, { login })(Login);
