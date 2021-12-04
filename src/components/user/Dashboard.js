@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { UserContext } from "../contexts/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
+import { UserContext } from "../../contexts/AuthContext";
 import axios from "axios";
 
 //Redux
 import { useDispatch, useSelector, connect } from "react-redux";
-import { logout as strLogout, setList } from "../actions/loginActions";
+import { logout as strLogout, setList } from "../../actions/loginActions";
 
 const Dashboard = (props) => {
   const navigate = useNavigate();
   const [authUser, setAuth] = useState(false);
   const [list, setList2] = useState("hello");
+  const [srchfld, setSrchfld] = useState("");
 
   const storeData = useSelector((user) => user);
 
@@ -26,7 +27,7 @@ const Dashboard = (props) => {
   const qckDispatch = useDispatch();
 
   useEffect(() => {
-    if (!storeData.session.user) navigate("/");
+    if (!storeData.session.user) navigate("/login");
 
     setAuth(storeData.session.userData);
     console.log("authuser", authUser);
@@ -37,6 +38,39 @@ const Dashboard = (props) => {
   useEffect(() => {
     console.log("authuser", authUser);
   }, [authUser]);
+
+  const handleOnChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    if (name == "search") setSrchfld(value);
+
+    srchRes(value);
+  };
+
+  const srchRes = (x) => {
+    const srchDta = storeData.list.list.filter((item) => {
+      return item.username.toLowerCase().includes(x.toLowerCase());
+    });
+    makeTable(srchDta);
+  };
+
+  const makeTable = (list) => {
+    const getDate = (dateString) => {
+      // console.log(dateString);
+      const date = new Date(parseInt(dateString));
+      return date.toDateString();
+    };
+    const listTble = list.map((item, index) => (
+      <tr key={item.id}>
+        <th scope="row">{index + 1}</th>
+        <td>{item.username}</td>
+        <td>{item.email}</td>
+        <td>{getDate(item.created)}</td>
+      </tr>
+    ));
+    setList2(listTble);
+  };
 
   const listUser = async () => {
     const limits = {
@@ -59,21 +93,7 @@ const Dashboard = (props) => {
 
       qckDispatch(setList(data.users));
 
-      const getDate = (dateString) => {
-        // console.log(dateString);
-        const date = new Date(parseInt(dateString));
-        return date.toDateString();
-      };
-
-      const list = storeData.list.list.map((item, index) => (
-        <tr key={item.id}>
-          <th scope="row">{index + 1}</th>
-          <td>{item.username}</td>
-          <td>{item.email}</td>
-          <td>{getDate(item.created)}</td>
-        </tr>
-      ));
-      setList2(list);
+      makeTable(storeData.list.list);
     } catch (error) {
       // setPerror(true);
       if (error.response) console.log(error.response.data);
@@ -86,7 +106,7 @@ const Dashboard = (props) => {
       console.log("logout");
 
       qckDispatch(strLogout());
-      logout();
+      // logout();
     } catch (error) {
       // setPerror(true);
       console.log(error);
@@ -104,6 +124,8 @@ const Dashboard = (props) => {
           type="text"
           placeholder="Search"
           aria-label="Search"
+          name="search"
+          onChange={handleOnChange}
         />
         <ul className="navbar-nav px-3">
           <li className="nav-item text-nowrap">
@@ -126,67 +148,10 @@ const Dashboard = (props) => {
                   </a>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    <span data-feather="file"></span>
-                    Orders
-                  </a>
+                  <Link to="/user/profile"> My Profile</Link>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    <span data-feather="shopping-cart"></span>
-                    Products
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    <span data-feather="users"></span>
-                    Customers
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    <span data-feather="bar-chart-2"></span>
-                    Reports
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    <span data-feather="layers"></span>
-                    Integrations
-                  </a>
-                </li>
-              </ul>
-
-              <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                <span>Saved reports</span>
-                <a className="d-flex align-items-center text-muted" href="#">
-                  <span data-feather="plus-circle"></span>
-                </a>
-              </h6>
-              <ul className="nav flex-column mb-2">
-                <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    <span data-feather="file-text"></span>
-                    Current month
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    <span data-feather="file-text"></span>
-                    Last quarter
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    <span data-feather="file-text"></span>
-                    Social engagement
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    <span data-feather="file-text"></span>
-                    Year-end sale
-                  </a>
+                  <Link to="/user/userlist"> UserList</Link>
                 </li>
               </ul>
             </div>
@@ -223,7 +188,7 @@ const Dashboard = (props) => {
 
             <h2>List of registerd Users</h2>
             <div className="table-responsive">
-              <table class="table">
+              <table className="table">
                 <thead>
                   <tr>
                     <th scope="col">#</th>

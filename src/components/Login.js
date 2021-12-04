@@ -24,14 +24,14 @@ const Login = (props) => {
   } = useContext(UserContext);
 
   const storUser = useSelector((user) => user);
-
+  const navigate = useNavigate();
   useEffect(() => {
-    if (storUser?.session.user) {
+    if (storUser.session.user) {
       console.log("storuser", storUser);
 
       conLogin(storUser.session.user);
       readUser(storUser.session.userData);
-      navigate("/user");
+      navigate("/");
     }
   }, [storUser]);
 
@@ -39,7 +39,7 @@ const Login = (props) => {
     if (test) navigate("/register");
   }, [test]);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const checkStore = () => {
     console.log(storUser);

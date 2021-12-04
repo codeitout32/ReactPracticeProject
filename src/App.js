@@ -4,10 +4,13 @@ import Forget from "./components/Forget";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import { Link } from "react-router-dom";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/user/Dashboard";
 import React, { useState, useEffect, useContext } from "react";
 
 import { connect } from "react-redux";
+import Userlist from "./components/user/Userlist";
+import Profile from "./components/user/Profile";
+import EditUser from "./components/user/EditUser";
 
 function App(props) {
   useEffect(() => {
@@ -22,14 +25,17 @@ function App(props) {
     <Router>
       <section>
         <nav>
-          <Link to="/">Login</Link>
+          <Link to="/login">Login</Link>
           <Link to="/register">Register</Link>
         </nav>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/forget" element={<Forget />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/user" element={<Dashboard />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/user/userlist" element={<Userlist />} />
+          <Route path="/user/userlist/:userid" element={<EditUser />} />
+          <Route path="/user/profile" element={<Profile />} />
         </Routes>
       </section>
     </Router>

@@ -4,6 +4,7 @@ import {
   LOGOUT,
   GET_USER_LIST,
   REGISTER_SUCCESS,
+  UPDATE_SUCCESS,
 } from "../actions/type";
 
 const initialState = {
@@ -35,6 +36,9 @@ const loginReducer = (state = initialState, action) => {
       };
     case LOGOUT:
       return initialState;
+
+    case UPDATE_SUCCESS:
+      return state;
 
     default:
       return state;

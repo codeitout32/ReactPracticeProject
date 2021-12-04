@@ -4,6 +4,8 @@ export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const USER_DATA_SUCCESS = "USER_DATA_SUCCESS";
 export const GET_USER_LIST = "GET_USER_LIST";
 
+export const UPDATE_SUCCESS = "UPDATE_SUCCESS";
+
 export const LOGIN_FAIL = "LOGIN_FAIL";
 export const LOGOUT = "LOGOUT";
 
