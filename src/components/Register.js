@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 // import { ActionCreators } from '/components/redux/actions/profile';
 
 //Redux
 import { useDispatch } from "react-redux";
 import { strRegister } from "../actions/loginActions";
+import { REGISTER_RESET } from "../actions/type";
 
 const baseurl = "https://api.m3o.com/v1/user/Create";
 
@@ -28,6 +29,17 @@ const Register = () => {
 
   const qckDispatch = useDispatch();
   const navigate = useNavigate();
+
+  const session = useSelector((state) => state.session);
+  let isSuccess = session.register;
+  console.log("issuccess", isSuccess);
+
+  useEffect(() => {
+    if (isSuccess) {
+      qckDispatch({ type: REGISTER_RESET });
+      navigate("/");
+    }
+  }, [isSuccess]);
 
   useEffect(() => {
     checkPass();
@@ -60,7 +72,7 @@ const Register = () => {
   const checkPass = () => {
     if (password != password2) setPerror(true);
     else setPerror(false);
-    console.log(passError);
+    console.log("passerror", passError);
   };
 
   const senData = async (user) => {
@@ -111,13 +123,11 @@ const Register = () => {
     const userData = { username, email, password };
     console.log(userData);
 
-    const final = await senData(userData);
+    // const final = await senData(userData);
 
-    qckDispatch(strRegister(final));
+    qckDispatch(strRegister(userData));
 
-    console.log(final);
-
-    navigate("/user");
+    // navigate("/user");
     //Redux register user
   };
 
@@ -126,6 +136,7 @@ const Register = () => {
       <div className="">
         <form className="form-signin" onSubmit={handleSubmit}>
           <h2 className="form-signin-heading">Register</h2>
+          {!isSuccess && <p className="text-danger">{session.response}</p>}
 
           <input
             type="text"

@@ -27,7 +27,7 @@ const Dashboard = (props) => {
   const qckDispatch = useDispatch();
 
   useEffect(() => {
-    if (!storeData.session.user) navigate("/login");
+    if (!storeData.session.userData) navigate("/login");
 
     setAuth(storeData.session.userData);
     console.log("authuser", authUser);

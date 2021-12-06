@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 
 //REdux
 import { useDispatch, useSelector } from "react-redux";
-import { delItem, fetchLists } from "../../actions/myAuth";
+import { delItem, fetchLists } from "../../actions/listActions";
 const Userlist = (props) => {
   const qckDispatch = useDispatch();
   const { history } = props;
@@ -15,8 +15,7 @@ const Userlist = (props) => {
   };
   const goDelete = (para) => {
     // strList = strList.filter((x) => x.id !== para);
-    if (window.confirm("are you sure?")) delItem(qckDispatch, para);
-    fetchLists(qckDispatch);
+    if (window.confirm("are you sure?")) qckDispatch(delItem(para));
   };
 
   console.log("strlist", strList);
@@ -39,7 +38,7 @@ const Userlist = (props) => {
   ));
 
   useEffect(() => {
-    fetchLists(qckDispatch);
+    fetchLists();
   }, []);
 
   console.log("list", strList);
@@ -50,7 +49,7 @@ const Userlist = (props) => {
         <h2>UserList</h2>
         <h2>List of registerd Users</h2>
         <div className="table-responsive">
-          <table class="table">
+          <table className="table">
             <thead>
               <tr>
                 <th scope="col">#</th>

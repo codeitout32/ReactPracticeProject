@@ -1,4 +1,10 @@
-import { GET_USER_LIST, LOGOUT } from "../actions/type";
+import {
+  DELETE_REQUEST,
+  DELETE_SUCCESS,
+  GET_USER_LIST,
+  LOGOUT,
+  UPDATE_LIST,
+} from "../actions/type";
 
 const initialState = {
   list: null,
@@ -10,6 +16,27 @@ const listReducer = (state = initialState, action) => {
       return {
         ...state,
         list: action.payload,
+      };
+    // case UPDATE_LIST:
+    //   return {
+    //     ...state,
+    //     list: action.payload,
+    //   };
+    case DELETE_REQUEST:
+      return {
+        ...state,
+        deleting: true,
+      };
+    case DELETE_SUCCESS:
+      return {
+        ...state,
+        deleting: false,
+      };
+    case DELETE_SUCCESS:
+      return {
+        ...state,
+        deleting: false,
+        response: action.payload,
       };
     case LOGOUT:
       console.log("logout from list reducer");

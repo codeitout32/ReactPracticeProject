@@ -5,7 +5,7 @@ import { Container, Form, Button, Row, Col } from "react-bootstrap";
 
 //Redux
 import { useSelector, useDispatch } from "react-redux";
-import { strUpdate } from "../../actions/loginActions";
+import { strUpdate, updateList } from "../../actions/loginActions";
 import {
   useMatch,
   useLocation,
@@ -13,7 +13,7 @@ import {
   Link,
   useNavigate,
 } from "react-router-dom";
-import { fetchLists } from "../../actions/myAuth";
+import { fetchLists } from "../../actions/listActions";
 
 const EditUser = () => {
   const uname = useRef("");
@@ -75,7 +75,10 @@ const EditUser = () => {
     const user = { username: inputUser, email: inputMail, id: userid };
 
     try {
-      qckDispatch(strUpdate(user, qckDispatch));
+      // qckDispatch(strUpdate(user, qckDispatch));
+
+      qckDispatch(updateList(user)); // Error is solved by using useDispatch instead of regular action call like in next line.
+      //updateList(user);
       navigate("/user/userlist/");
     } catch (error) {}
   };

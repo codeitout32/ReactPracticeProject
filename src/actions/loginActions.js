@@ -4,11 +4,13 @@ import {
   USER_DATA_SUCCESS,
   GET_USER_LIST,
   REGISTER_SUCCESS,
+  REGISTER_REQUEST,
   UPDATE_SUCCESS,
+  UPDATE_LIST,
 } from "./type";
 
 import axios from "axios";
-import { fetchLists } from "./myAuth";
+import { fetchLists } from "./listActions";
 
 const headers = {
   "Content-type": "application/json",
@@ -35,7 +37,7 @@ export const logout = () => {
 };
 
 export const setList = (list) => {
-  console.log("action lists");
+  console.log("action lists", list);
 
   return {
     type: GET_USER_LIST,
@@ -43,10 +45,19 @@ export const setList = (list) => {
   };
 };
 
+export const updateList = (user) => {
+  console.log("updating action lists");
+
+  return {
+    type: UPDATE_LIST,
+    payload: user,
+  };
+};
+
 export const strRegister = (user) => {
   console.log("action register", user);
   return {
-    type: REGISTER_SUCCESS,
+    type: REGISTER_REQUEST,
     payload: user,
   };
 };
